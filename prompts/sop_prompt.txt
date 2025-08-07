@@ -1,0 +1,9 @@
+Write a Statement of Purpose for the following student:
+Name: {sandeep}
+University: {presidency university}
+Program: {CSE}
+GPA: {7.5}
+Career Goals: {dream big}
+Experience: {1}
+Tone: Professional and Ambitious.
+Write a statement of purpose for a student applying to...

@@ -1,0 +1,8 @@
+Write a Letter of Recommendation for a student applying to:
+University: {presidensy}
+Program: {b.tech}
+Student Name: {sandeep}
+The recommender is impressed by the student's experience:
+{experience}
+Please keep the tone formal and supportive.
+Write a letter of recommendation for...

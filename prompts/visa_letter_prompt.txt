@@ -1,0 +1,8 @@
+Write a visa motivation letter for the following student:
+Name: {sandeep}
+University: {presidensy}
+Course: {CSE}
+GPA: {7.5}
+Career Goals: {DREAM BIG}
+Experience: {1}
+Write a visa motivation letter for...
